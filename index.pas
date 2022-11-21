@@ -65,6 +65,9 @@ end;
 
 procedure changeCurrentPlayerIndex();
 begin
+    if (hasWinner) or (isTie) then
+        exit;
+
     if currentPlayerIndex = 1 then
         currentPlayerIndex := 2
     else
@@ -96,7 +99,7 @@ begin
         textcolor(9)
     else 
         textcolor(14);
-    writeln(playerNames[currentPlayerIndex], ', escolha uma posicao para marcar com o simbolo ', symbols[currentPlayerIndex]);
+    writeln(playerNames[currentPlayerIndex], ', escolha uma posicao para marcar com o simbolo ', symbols[currentPlayerIndex], ' (horizontal)');
     textcolor(11);
     write('Posicoes disponiveis: ');
     for i := 1 to 9 do
@@ -127,13 +130,42 @@ end;
 
 procedure verifyGameOver();
 var i: integer;
+var simbol: string;
 begin
-    for i := 1 to 9 do
-    begin
-        if remainingPositions[i] <> 0 then
-            exit;
-    end;
-    isTie := true;
+    simbol := symbols[currentPlayerIndex];
+    if((board[1,1] = simbol) and (board[1,2] = simbol) and (board[1,3] = simbol)) then
+            sethasWinner()
+        
+    else if((board[2,1] = simbol) and (board[2,2] = simbol) and (board[2,3] = simbol)) then
+            sethasWinner()
+      
+    else if((board[3,1] = simbol) and (board[3,2] = simbol) and (board[3,3] = simbol)) then
+            sethasWinner()
+        
+    else if((board[1, 1] = simbol) and (board[2,1] = simbol) and (board[3,1] = simbol)) then
+            sethasWinner()
+        
+    else if((board[1,2] = simbol) and (board[2,2] = simbol) and (board[3,2] = simbol)) then
+            sethasWinner()
+       
+    else if((board[1,3] = simbol) and (board[2,3] = simbol) and (board[3,3] = simbol)) then
+            sethasWinner()
+      
+    else if((board[1,1] = simbol) and (board[2,2] = simbol) and (board[3,3] = simbol)) then
+            sethasWinner()
+        
+    else if((board[1,3] = simbol) and (board[2,2] = simbol) and (board[3,1] = simbol)) then
+            sethasWinner();
+
+     if not hasWinner then
+        begin
+            for i := 1 to 9 do
+                begin
+                    if remainingPositions[i] <> 0 then
+                        exit;
+                end;
+            isTie := true;
+        end;
 end;
     
 begin
@@ -196,15 +228,15 @@ begin
                 readln(choosedPosition);
             end;
         applyPlayerChoice();
+        verifyGameOver();
         drawBoard();
         changeCurrentPlayerIndex();
-        verifyGameOver();
-    until (hasWinner) or (isTie);
+    until (isTie) or (hasWinner);
 
     if hasWinner then
     begin
         textcolor(2);
-        writeln(playerNames[currentPlayerIndex], ' venceu!');
+        writeln(playerNames[currentPlayerIndex], ' (', symbols[currentPlayerIndex], ')', ' venceu!');
     end
     else
     begin
